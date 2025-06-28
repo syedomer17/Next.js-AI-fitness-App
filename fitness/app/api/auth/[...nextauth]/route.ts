@@ -10,7 +10,8 @@ import bcrypt from "bcryptjs";
 import type { JWT } from "next-auth/jwt";
 import type { Session, User as NextAuthUser, Account } from "next-auth";
 
-const sessionStrategy: SessionStrategy = "jwt";
+const DEFAULT_AVATAR =
+  "https://play-lh.googleusercontent.com/nV5JHE9tyyqNcVqh0JLVGoV2ldpAqC8htiBpsbjqxATjXQnpNTKgU99B-euShOJPu-8";
 
 export const authOptions: AuthOptions = {
   providers: [
@@ -49,24 +50,29 @@ export const authOptions: AuthOptions = {
           id: user._id.toString(),
           name: user.name,
           email: user.email,
-          image: user.avatar || null,
+          image: user.avatar || DEFAULT_AVATAR,
         };
       },
     }),
   ],
 
   session: {
-    strategy: sessionStrategy,
+    strategy: "jwt",
   },
 
   callbacks: {
     async jwt({ token, user }: { token: JWT; user?: NextAuthUser }) {
-      if (user) token.user = user;
+      if (user) {
+        token.user = user;
+      }
       return token;
     },
     async session({ session, token }: { session: Session; token: JWT }) {
       // @ts-ignore
       session.user = token.user as NextAuthUser;
+      if (!session.user.image) {
+        session.user.image = DEFAULT_AVATAR;
+      }
       return session;
     },
     async signIn({
@@ -86,7 +92,7 @@ export const authOptions: AuthOptions = {
             name: user.name,
             email: user.email,
             emailVerified: true,
-            avatar: user.image,
+            avatar: user.image || DEFAULT_AVATAR,
             bio: "",
           });
         }
@@ -95,7 +101,7 @@ export const authOptions: AuthOptions = {
       return true;
     },
     async redirect({ url, baseUrl }: { url: string; baseUrl: string }) {
-      return baseUrl + "/"; // Always redirect to homepage after login
+      return baseUrl + "/";
     },
   },
 

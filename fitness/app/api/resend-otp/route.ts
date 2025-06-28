@@ -5,15 +5,23 @@ import { NextResponse } from 'next/server';
 
 export async function POST(req: Request) {
   await connectToDB();
+
   const { email } = await req.json();
 
   const user = await User.findOne({ email });
   if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 });
 
+  if (user.emailVerified) {
+    return NextResponse.json({ message: 'Email already verified' });
+  }
+
+  // Generate new OTP and save timestamp
   const otp = Math.floor(100000 + Math.random() * 900000).toString();
   user.otp = otp;
+  user.otpCreatedAt = new Date();
   await user.save();
 
+  // Send OTP email
   const transporter = nodemailer.createTransport({
     service: 'Gmail',
     auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },

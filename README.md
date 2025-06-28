@@ -1,15 +1,15 @@
 # 🏋️‍♂️ Next.js AI Fitness App
 
-An **AI-powered Fitness Application** built with **Next.js**, **TypeScript**, and **TailwindCSS**.  
+An **AI-powered Fitness Application** built with **Next.js**, **TypeScript**, and **Tailwind CSS**.
 This app allows users to:
 
-✅ Sign up, sign in, and authenticate with Google & GitHub  
-✅ Verify email via OTP  
-✅ Reset forgotten passwords  
-✅ Upload a profile image  
-✅ Generate personalized fitness plans with Gemini API  
-✅ Manage workout data and plans  
-✅ Receive workout plans via email  
+✅ Sign up, sign in, and authenticate with Google & GitHub
+✅ Verify email via OTP
+✅ Reset forgotten passwords
+✅ Upload a profile image
+✅ Generate personalized fitness plans with the Gemini API
+✅ Manage workout data and plans
+✅ Receive workout plans via email
 
 ---
 
@@ -30,23 +30,28 @@ This app allows users to:
 
 ## 🌟 Features
 
-- **Authentication**
-  - Email/password signup & login
-  - OAuth login with Google and GitHub
-  - Email verification via OTP
-  - Password reset via email
+* **Authentication**
 
-- **User Profile**
-  - Upload profile avatar with Cloudinary
+  * Email/password signup and login
+  * OAuth login with Google and GitHub
+  * Email verification via OTP
+  * Password reset via email
 
-- **AI Fitness Planner**
-  - Generate personalized workout plans using Google Gemini API
-  - Save and manage workout data
-  - Send complete plans to the user's email
+* **User Profile**
+
+  * Upload a profile avatar using Cloudinary
+
+* **AI Fitness Planner**
+
+  * Generate personalized workout plans with the Google Gemini API
+  * Save and manage workout data
+  * Send workout plans to the user's email
 
 ---
+
 ## 📂 Folder Structure
 
+```
 fitness/
 ├── app/
 │   ├── api/
@@ -56,18 +61,18 @@ fitness/
 │   │   ├── forgot-password/route.ts
 │   │   ├── resend-otp/route.ts
 │   │   └── user/
-│   │       ├── avtar/route.ts
-│   │       ├── generate-plane/route.ts
-│   │       ├── send-plane/route.ts
+│   │       ├── avatar/route.ts
+│   │       ├── generate-plan/route.ts
+│   │       ├── send-plan/route.ts
 │   │       ├── workout-data/route.ts
-│   │       ├── workout-plane/route.ts
+│   │       ├── workout-plan/route.ts
 │   │       └── verify-otp/route.ts
 │   ├── forgot-password/page.tsx
 │   ├── signup/page.tsx
 │   ├── login/page.tsx
 │   ├── workout-planner/page.tsx
-│   ├── verify-opt/page.tsx
-│   └── WorkoutPlanePage/page.tsx
+│   ├── verify-otp/page.tsx
+│   └── workout-plan/page.tsx
 │
 ├── lib/
 │   ├── cloudinary.ts
@@ -95,25 +100,22 @@ fitness/
 ├── tailwind.config.js
 ├── tsconfig.json
 └── README.md
-
+```
 
 ---
 
 ## 🛠️ Getting Started
 
-### 1️⃣ Clone the repository
+### 1️⃣ Clone the Repository
 
 ```bash
 git clone https://github.com/syedomer17/Next.js-AI-fitness-App.git
-```
-
-```bash
 cd Next.js-AI-fitness-App
 ```
 
 ---
 
-### 2️⃣ Install dependencies
+### 2️⃣ Install Dependencies
 
 ```bash
 npm install
@@ -133,6 +135,7 @@ Create a `.env` file in the root directory:
 
 ```ini
 MONGODB_URI=
+
 EMAIL_USER=
 EMAIL_PASS=
 
@@ -154,24 +157,26 @@ CLOUDINARY_API_KEY=
 CLOUDINARY_API_SECRET=
 ```
 
-✅ **Note:** Never commit `.env` to public repositories.
+✅ **Note:** Never commit `.env` files to public repositories.
 
 ---
 
-### 4️⃣ Run the development server
+### 4️⃣ Run the Development Server
 
 ```bash
 npm run dev
 ```
 
-App will be available at [http://localhost:3000](http://localhost:3000)
+Your app will be running at [http://localhost:3000](http://localhost:3000).
 
 ---
 
 ## 📧 Contact
 
-If you have questions or feedback, feel free to reach out!
+If you have questions, suggestions, or feedback, feel free to reach out!
 
 ---
 
 **Enjoy building your AI Fitness journey! 💪**
+
+---

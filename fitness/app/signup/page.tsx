@@ -31,16 +31,67 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-20 p-4 border rounded shadow">
-      <h2 className="text-xl font-bold mb-4">Sign Up</h2>
-      <form onSubmit={handleSubmit} className="space-y-3">
-        <input type="text" name="name" placeholder="Name" onChange={handleChange} required className="w-full p-2 border rounded" />
-        <input type="email" name="email" placeholder="Email" onChange={handleChange} required className="w-full p-2 border rounded" />
-        <input type="password" name="password" placeholder="Password" onChange={handleChange} required className="w-full p-2 border rounded" />
-        <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded">
-          {loading ? 'Creating...' : 'Sign Up'}
-        </button>
-      </form>
+    <div className="flex items-center justify-center min-h-screen px-4 bg-gradient-to-r from-blue-900 to-blue-700">
+      <div className="signup-form w-full max-w-md bg-white/10 border-2 border-white/30 p-6 rounded-lg shadow-lg backdrop-blur-md shadow-white/30">
+        <h2 className="text-3xl font-semibold text-center text-white mb-6">
+          Create your account
+        </h2>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label htmlFor="name" className="block text-sm font-medium text-white">
+              Full Name
+            </label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              placeholder="Enter your name..."
+              onChange={handleChange}
+              required
+              className="w-full p-3 mt-1 border rounded-lg bg-transparent text-white border-white/30 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-300"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="email" className="block text-sm font-medium text-white">
+              Email Address
+            </label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              placeholder="Enter your email..."
+              onChange={handleChange}
+              required
+              className="w-full p-3 mt-1 border rounded-lg bg-transparent text-white border-white/30 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-300"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="password" className="block text-sm font-medium text-white">
+              Password
+            </label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              placeholder="Enter your password..."
+              onChange={handleChange}
+              required
+              className="w-full p-3 mt-1 border rounded-lg bg-transparent text-white border-white/30 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-300"
+            />
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full py-3 text-lg font-medium bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all duration-300"
+          >
+            {loading ? 'Creating...' : 'Sign Up'}
+          </button>
+        </form>
+      </div>
     </div>
   );
 }

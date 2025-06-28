@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import { useSession } from "next-auth/react";
+import { FaPaperPlane } from "react-icons/fa";
 
 export default function WorkoutPlanPage() {
   const router = useRouter();
@@ -64,43 +65,70 @@ export default function WorkoutPlanPage() {
   }
 
   if (status === "loading") {
-    return <div className="text-center text-white">Loading session...</div>;
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-indigo-900 via-purple-900 to-blue-900 text-white text-lg">
+        Loading session...
+      </div>
+    );
   }
 
   return (
     <>
       <ToastContainer />
-      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 p-6">
-        <div className="w-full max-w-5xl flex justify-between items-center p-4">
-          <h1 className="text-yellow-400 text-2xl font-bold">Your Workout Plan</h1>
-          <button
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-indigo-900 via-purple-900 to-blue-900 p-6">
+        <motion.div
+          className="w-full max-w-5xl flex flex-col md:flex-row md:justify-between items-center gap-4 p-4"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          <h1 className="text-3xl md:text-4xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-yellow-400 to-pink-500">
+            Your Workout Plan
+          </h1>
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             onClick={() => router.push("/workout-planner")}
-            className="bg-yellow-500 px-4 py-2 rounded-lg text-white font-semibold hover:bg-yellow-600 transition"
+            className="bg-yellow-400 hover:bg-yellow-500 text-gray-900 px-4 py-2 rounded-lg font-semibold transition"
           >
             Back to Planner
-          </button>
-        </div>
+          </motion.button>
+        </motion.div>
 
         <motion.div
-          className="plan-container max-w-5xl w-full bg-gray-800 text-white p-8 rounded-2xl shadow-xl"
+          className="plan-container max-w-5xl w-full bg-white/10 backdrop-blur-md text-white p-8 rounded-3xl shadow-2xl mt-4"
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5 }}
         >
-          <pre className="whitespace-pre-wrap break-words">{workoutPlan}</pre>
+          <pre className="whitespace-pre-wrap break-words font-mono text-base">
+            {workoutPlan}
+          </pre>
         </motion.div>
 
-        <button
+        <motion.button
+          whileHover={{
+            scale: loading ? 1 : 1.03,
+            boxShadow: loading ? "none" : "0 0 20px #3b82f6",
+          }}
+          whileTap={{ scale: loading ? 1 : 0.97 }}
           onClick={sendPlan}
           disabled={loading}
-          className={`mt-6 w-full max-w-5xl py-3 rounded-lg font-semibold text-lg transition ${
+          className={`mt-6 w-full max-w-5xl py-3 rounded-lg font-semibold text-lg transition flex items-center justify-center ${
             loading
               ? "bg-gray-500 cursor-not-allowed"
               : "bg-blue-500 hover:bg-blue-600 text-white"
           }`}
         >
-          {loading ? "Sending..." : "Send Plan to Email"}
-        </button>
+          {loading ? (
+            "Sending..."
+          ) : (
+            <>
+              <FaPaperPlane className="mr-2" />
+              Send Plan to Email
+            </>
+          )}
+        </motion.button>
       </div>
     </>
   );

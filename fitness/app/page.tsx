@@ -1,18 +1,40 @@
 'use client';
 
-import { useSession, signOut } from 'next-auth/react';
+import { useSession, signOut, signIn } from 'next-auth/react';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const DEFAULT_AVATAR =
   'https://play-lh.googleusercontent.com/nV5JHE9tyyqNcVqh0JLVGoV2ldpAqC8htiBpsbjqxATjXQnpNTKgU99B-euShOJPu-8';
 
 export default function HomePage() {
   const { data: session, status } = useSession();
+  // Initialize avatarUrl once from session or default
+  const [avatarUrl, setAvatarUrl] = useState<string>(
+    () => session?.user?.image || DEFAULT_AVATAR
+  );
   const [uploading, setUploading] = useState(false);
 
+  // Update avatarUrl only if it is still default and session image exists
+  useEffect(() => {
+    if (
+      (!avatarUrl || avatarUrl === DEFAULT_AVATAR) &&
+      session?.user?.image &&
+      session.user.image.length > 10
+    ) {
+      setAvatarUrl(session.user.image);
+    }
+  }, [session, avatarUrl]);
+
   if (status === 'loading') {
-    return <div className="text-center mt-20 text-gray-600">Loading...</div>;
+    return (
+      <div className="text-center mt-20 text-gray-600 text-lg animate-pulse">
+        Loading...
+      </div>
+    );
   }
 
   async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -32,13 +54,19 @@ export default function HomePage() {
           body: JSON.stringify({ avatar: base64data }),
         });
 
+        const data = await res.json();
+
         if (res.ok) {
-          alert('Avatar updated! Refresh to see changes.');
+          toast.success('✅ Avatar updated!');
+          if (data.imageUrl) {
+            setAvatarUrl(data.imageUrl); // update avatar instantly and persist in state
+          }
+          await signIn(); // refresh NextAuth session with updated avatar
         } else {
-          alert('Failed to update avatar.');
+          toast.error('❌ Failed to update avatar: ' + data.message);
         }
       } catch {
-        alert('Error uploading avatar.');
+        toast.error('❌ Error uploading avatar.');
       } finally {
         setUploading(false);
       }
@@ -48,53 +76,71 @@ export default function HomePage() {
   }
 
   return (
-    <main className="max-w-2xl mx-auto mt-20 p-6 text-center border rounded shadow bg-white">
-      {session ? (
-        <>
-          <h1 className="text-2xl font-bold mb-4 text-gray-800">Welcome, {session.user?.name}!</h1>
-          <p className="mb-4 text-gray-600">Email: {session.user?.email}</p>
+    <div className="min-h-screen bg-gradient-to-br from-gray-100 to-blue-50 flex items-center justify-center px-4">
+      <ToastContainer position="top-right" autoClose={2500} />
+      <motion.main
+        initial={{ opacity: 0, y: 50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="w-full max-w-xl bg-white p-8 rounded-3xl shadow-2xl text-center"
+      >
+        {session ? (
+          <>
+            <motion.h1
+              className="text-3xl font-extrabold text-gray-800 mb-2"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.2 }}
+            >
+              Welcome, {session.user?.name}!
+            </motion.h1>
 
-          <img
-            src={session.user?.image || DEFAULT_AVATAR}
-            alt="Avatar"
-            className="mx-auto rounded-full w-24 h-24 mb-4 border-4 border-yellow-400"
-          />
+            <p className="text-gray-500 mb-4">{session.user?.email}</p>
 
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleFileChange}
-            disabled={uploading}
-            className="mb-4 block mx-auto text-sm"
-          />
+            <motion.img
+              key={avatarUrl}
+              src={avatarUrl}
+              alt="Avatar"
+              className="mx-auto w-28 h-28 rounded-full border-4 border-blue-400 shadow-md hover:scale-105 transition-transform duration-300"
+              whileHover={{ scale: 1.1 }}
+            />
 
-          <Link
-            href="/workout-planner"
-            className="inline-block bg-green-600 text-white px-4 py-2 rounded mb-4 hover:bg-green-700 transition"
-          >
-            Go to Workout Planner
-          </Link>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+              disabled={uploading}
+              className="mt-4 mb-6 text-sm text-gray-700 cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-100 file:text-blue-700 hover:file:bg-blue-200"
+            />
 
-          <br />
+            <Link
+              href="/workout-planner"
+              className="block w-full py-3 bg-green-500 hover:bg-green-600 text-white font-bold rounded-xl mb-3 transition-all duration-300 shadow-md"
+            >
+              Go to Workout Planner
+            </Link>
 
-          <button
-            onClick={() => signOut({ callbackUrl: '/login' })}
-            className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition"
-          >
-            Sign Out
-          </button>
-        </>
-      ) : (
-        <>
-          <h1 className="text-2xl font-bold mb-4">You are not logged in</h1>
-          <Link
-            href="/login"
-            className="bg-blue-600 text-white px-4 py-2 rounded inline-block hover:bg-blue-700 transition"
-          >
-            Go to Login
-          </Link>
-        </>
-      )}
-    </main>
+            <button
+              onClick={() => signOut({ callbackUrl: '/login' })}
+              className="block w-full py-3 bg-red-500 hover:bg-red-600 text-white font-bold rounded-xl transition-all duration-300 shadow-md"
+            >
+              Sign Out
+            </button>
+          </>
+        ) : (
+          <>
+            <h1 className="text-2xl font-bold mb-6 text-gray-800">
+              You're not logged in
+            </h1>
+            <Link
+              href="/login"
+              className="inline-block px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl transition-all duration-300 shadow-md"
+            >
+              Go to Login
+            </Link>
+          </>
+        )}
+      </motion.main>
+    </div>
   );
 }

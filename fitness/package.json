@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@auth/core": "^0.40.0",
+    "cloudinary": "^2.7.0",
     "framer-motion": "^12.19.2",
     "gsap": "^3.13.0",
     "lodash.debounce": "^4.0.8",

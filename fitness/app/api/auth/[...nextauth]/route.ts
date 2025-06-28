@@ -1,14 +1,11 @@
 import NextAuth from "next-auth";
-import type { AuthOptions, SessionStrategy } from "next-auth";
+import type { AuthOptions } from "next-auth";
 import GitHubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { connectToDB } from "@/lib/mongodb";
 import User from "@/models/User";
 import bcrypt from "bcryptjs";
-
-import type { JWT } from "next-auth/jwt";
-import type { Session, User as NextAuthUser, Account } from "next-auth";
 
 const DEFAULT_AVATAR =
   "https://play-lh.googleusercontent.com/nV5JHE9tyyqNcVqh0JLVGoV2ldpAqC8htiBpsbjqxATjXQnpNTKgU99B-euShOJPu-8";
@@ -40,17 +37,15 @@ export const authOptions: AuthOptions = {
         if (!user) throw new Error("No user found with this email");
         if (!user.emailVerified) throw new Error("Email not verified");
 
-        const isValid = await bcrypt.compare(
-          credentials.password,
-          user.password!
-        );
+        const isValid = await bcrypt.compare(credentials.password, user.password!);
         if (!isValid) throw new Error("Incorrect password");
 
+        // Return only allowed fields (id is used internally)
         return {
-          id: user._id.toString(),
           name: user.name,
           email: user.email,
           image: user.avatar || DEFAULT_AVATAR,
+          id: user._id.toString(), // keep it for JWT callback
         };
       },
     }),
@@ -61,27 +56,27 @@ export const authOptions: AuthOptions = {
   },
 
   callbacks: {
-    async jwt({ token, user }: { token: JWT; user?: NextAuthUser }) {
+    async jwt({ token, user }) {
       if (user) {
         token.user = user;
       }
       return token;
     },
-    async session({ session, token }: { session: Session; token: JWT }) {
-      // @ts-ignore
-      session.user = token.user as NextAuthUser;
-      if (!session.user.image) {
-        session.user.image = DEFAULT_AVATAR;
+    async session({ session, token }) {
+      if (session.user && token.user) {
+        session.user = {
+          ...session.user,
+          id: token.user.id,
+          name: token.user.name,
+          email: token.user.email,
+          image: token.user.image || DEFAULT_AVATAR,
+        };
+      } else if (session.user) {
+        session.user.image = session.user.image || DEFAULT_AVATAR;
       }
       return session;
     },
-    async signIn({
-      user,
-      account,
-    }: {
-      user: NextAuthUser;
-      account: Account | null;
-    }) {
+    async signIn({ user, account }) {
       await connectToDB();
 
       if (account?.provider === "google" || account?.provider === "github") {
@@ -100,7 +95,7 @@ export const authOptions: AuthOptions = {
 
       return true;
     },
-    async redirect({ url, baseUrl }: { url: string; baseUrl: string }) {
+    async redirect({ url, baseUrl }) {
       return baseUrl + "/";
     },
   },

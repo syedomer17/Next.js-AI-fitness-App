@@ -4,11 +4,17 @@ An **AI-powered Fitness Application** built with **Next.js**, **TypeScript**, an
 This app allows users to:
 
 ✅ Sign up, sign in, and authenticate with Google & GitHub
+
 ✅ Verify email via OTP
+
 ✅ Reset forgotten passwords
+
 ✅ Upload a profile image
+
 ✅ Generate personalized fitness plans with the Gemini API
+
 ✅ Manage workout data and plans
+
 ✅ Receive workout plans via email
 
 ---

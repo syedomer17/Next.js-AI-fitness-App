@@ -1,3 +1,5 @@
+//app/api/auth/resend-otp/route.ts
+
 import { connectToDB } from '@/lib/mongodb';
 import User from '@/models/User';
 import nodemailer from 'nodemailer';

@@ -1,3 +1,5 @@
+//fitness/models/User.ts
+
 import mongoose, { Schema, Document } from "mongoose";
 
 export interface IUser extends Document {
@@ -7,6 +9,7 @@ export interface IUser extends Document {
   emailVerified: boolean;
   otp?: string;
   otpCreatedAt?: Date;
+  passwordResetVerified: boolean;
   avatar?: string;
   bio?: string;
 
@@ -31,6 +34,7 @@ const UserSchema = new Schema<IUser>(
     emailVerified: { type: Boolean, default: false },
     otp: { type: String },
     otpCreatedAt: { type: Date },
+    passwordResetVerified: { type: Boolean, default: false },
     avatar: {
       type: String,
       default:

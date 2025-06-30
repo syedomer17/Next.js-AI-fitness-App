@@ -1,3 +1,5 @@
+//app/api/auth/verify-otp
+
 import { connectToDB } from '@/lib/mongodb';
 import User from '@/models/User';
 import { NextResponse } from 'next/server';

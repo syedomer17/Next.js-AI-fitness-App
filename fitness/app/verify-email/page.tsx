@@ -1,14 +1,15 @@
-'use client';
+"use client";
 
-import { useState, useRef, useEffect } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useState, useRef, useEffect } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
+import { toast } from "react-hot-toast";
 
 export default function VerifyEmailPage() {
-  const [otp, setOtp] = useState(Array(6).fill(''));
+  const [otp, setOtp] = useState(Array(6).fill(""));
   const inputsRef = useRef<Array<HTMLInputElement | null>>([]);
   const router = useRouter();
   const searchParams = useSearchParams();
-  const email = searchParams.get('email');
+  const email = searchParams.get("email");
 
   const [countdown, setCountdown] = useState(60);
   const [resending, setResending] = useState(false);
@@ -20,7 +21,7 @@ export default function VerifyEmailPage() {
   }, [countdown]);
 
   const handleChange = (index: number, value: string) => {
-    if (!/^\d?$/.test(value)) return; // Only digits, max 1 char
+    if (!/^\d?$/.test(value)) return;
     const newOtp = [...otp];
     newOtp[index] = value;
     setOtp(newOtp);
@@ -31,32 +32,32 @@ export default function VerifyEmailPage() {
   };
 
   const handleKeyDown = (e: React.KeyboardEvent, index: number) => {
-    if (e.key === 'Backspace' && !otp[index] && index > 0) {
+    if (e.key === "Backspace" && !otp[index] && index > 0) {
       inputsRef.current[index - 1]?.focus();
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const enteredOtp = otp.join('');
+    const enteredOtp = otp.join("");
     if (enteredOtp.length < 6) {
-      alert('Please enter a 6-digit OTP');
+      toast.error("Please enter a 6-digit OTP");
       return;
     }
 
-    const res = await fetch('/api/verify-otp', {
-      method: 'POST',
+    const res = await fetch("/api/verify-otp", {
+      method: "POST",
       body: JSON.stringify({ email, otp: enteredOtp }),
-      headers: { 'Content-Type': 'application/json' },
+      headers: { "Content-Type": "application/json" },
     });
 
     const data = await res.json();
 
     if (res.ok) {
-      alert('Email verified successfully!');
-      router.push('/login');
+      toast.success("Email verified successfully!");
+      router.push("/login");
     } else {
-      alert(data.error || 'Verification failed');
+      toast.error(data.error || "Verification failed");
     }
   };
 
@@ -65,24 +66,24 @@ export default function VerifyEmailPage() {
 
     setResending(true);
     try {
-      const res = await fetch('/api/resend-otp', {
-        method: 'POST',
+      const res = await fetch("/api/resend-otp", {
+        method: "POST",
         body: JSON.stringify({ email }),
-        headers: { 'Content-Type': 'application/json' },
+        headers: { "Content-Type": "application/json" },
       });
 
       const data = await res.json();
 
       if (res.ok) {
-        alert('OTP resent successfully');
+        toast.success("OTP resent successfully");
         setCountdown(60);
-        setOtp(Array(6).fill(''));
+        setOtp(Array(6).fill(""));
         inputsRef.current[0]?.focus();
       } else {
-        alert(data.error || 'Failed to resend OTP');
+        toast.error(data.error || "Failed to resend OTP");
       }
     } catch (error) {
-      alert('Failed to resend OTP');
+      toast.error("Failed to resend OTP");
     } finally {
       setResending(false);
     }
@@ -133,7 +134,7 @@ export default function VerifyEmailPage() {
               onClick={handleResend}
               className="underline hover:text-blue-400"
             >
-              {resending ? 'Resending...' : 'Resend OTP'}
+              {resending ? "Resending..." : "Resend OTP"}
             </button>
           )}
         </div>

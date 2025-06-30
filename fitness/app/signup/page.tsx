@@ -1,12 +1,13 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { signIn } from 'next-auth/react';
-import { FaGithub } from 'react-icons/fa';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
+import { toast } from "react-hot-toast";
+import { FaGithub } from "react-icons/fa";
 
 export default function SignupPage() {
-  const [form, setForm] = useState({ name: '', email: '', password: '' });
+  const [form, setForm] = useState({ name: "", email: "", password: "" });
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
@@ -16,20 +17,25 @@ export default function SignupPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    const res = await fetch('/api/register', {
-      method: 'POST',
-      body: JSON.stringify(form),
-      headers: { 'Content-Type': 'application/json' },
-    });
+    try {
+      const res = await fetch("/api/register", {
+        method: "POST",
+        body: JSON.stringify(form),
+        headers: { "Content-Type": "application/json" },
+      });
 
-    const data = await res.json();
-    if (res.ok) {
-      alert('Signup successful. Check email for OTP.');
-      router.push('/verify-email?email=' + form.email);
-    } else {
-      alert(data.error || 'Signup failed');
+      const data = await res.json();
+      if (res.ok) {
+        toast.success("Signup successful! Check email for OTP.");
+        router.push("/verify-email?email=" + form.email);
+      } else {
+        toast.error(data.error || "Signup failed.");
+      }
+    } catch {
+      toast.error("Something went wrong.");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (
@@ -90,7 +96,7 @@ export default function SignupPage() {
             disabled={loading}
             className="w-full py-3 text-lg font-medium bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all duration-300"
           >
-            {loading ? 'Creating...' : 'Sign Up'}
+            {loading ? "Creating..." : "Sign Up"}
           </button>
         </form>
 
@@ -105,7 +111,7 @@ export default function SignupPage() {
         <div className="space-y-2">
           <button
             type="button"
-            onClick={() => signIn('github', { callbackUrl: '/' })}
+            onClick={() => signIn("github", { callbackUrl: "/" })}
             className="w-full flex items-center justify-center gap-2 bg-black text-white py-3 rounded-lg hover:bg-gray-800 transition duration-300"
           >
             <FaGithub size={20} />
@@ -114,7 +120,7 @@ export default function SignupPage() {
 
           <button
             type="button"
-            onClick={() => signIn('google', { callbackUrl: '/' })}
+            onClick={() => signIn("google", { callbackUrl: "/" })}
             className="w-full flex items-center justify-center gap-2 bg-white text-black py-3 rounded-lg border border-gray-300 hover:bg-gray-100 transition duration-300"
           >
             {/* Google G SVG */}

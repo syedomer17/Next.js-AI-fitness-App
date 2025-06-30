@@ -1,14 +1,15 @@
-'use client';
+"use client";
 
-import { useSession, signOut, signIn } from 'next-auth/react';
-import Link from 'next/link';
-import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { useSession, signOut, signIn } from "next-auth/react";
+import Link from "next/link";
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Image from "next/image";
 
 const DEFAULT_AVATAR =
-  'https://play-lh.googleusercontent.com/nV5JHE9tyyqNcVqh0JLVGoV2ldpAqC8htiBpsbjqxATjXQnpNTKgU99B-euShOJPu-8';
+  "https://play-lh.googleusercontent.com/nV5JHE9tyyqNcVqh0JLVGoV2ldpAqC8htiBpsbjqxATjXQnpNTKgU99B-euShOJPu-8";
 
 export default function HomePage() {
   const { data: session, status } = useSession();
@@ -29,7 +30,7 @@ export default function HomePage() {
     }
   }, [session, avatarUrl]);
 
-  if (status === 'loading') {
+  if (status === "loading") {
     return (
       <div className="text-center mt-20 text-gray-600 text-lg animate-pulse">
         Loading...
@@ -48,25 +49,25 @@ export default function HomePage() {
 
       setUploading(true);
       try {
-        const res = await fetch('/api/user/avatar', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+        const res = await fetch("/api/user/avatar", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ avatar: base64data }),
         });
 
         const data = await res.json();
 
         if (res.ok) {
-          toast.success('✅ Avatar updated!');
+          toast.success("✅ Avatar updated!");
           if (data.imageUrl) {
             setAvatarUrl(data.imageUrl); // update avatar instantly and persist in state
           }
           await signIn(); // refresh NextAuth session with updated avatar
         } else {
-          toast.error('❌ Failed to update avatar: ' + data.message);
+          toast.error("❌ Failed to update avatar: " + data.message);
         }
       } catch {
-        toast.error('❌ Error uploading avatar.');
+        toast.error("❌ Error uploading avatar.");
       } finally {
         setUploading(false);
       }
@@ -97,13 +98,20 @@ export default function HomePage() {
 
             <p className="text-gray-500 mb-4">{session.user?.email}</p>
 
-            <motion.img
-              key={avatarUrl}
-              src={avatarUrl}
-              alt="Avatar"
-              className="mx-auto w-28 h-28 rounded-full border-4 border-blue-400 shadow-md hover:scale-105 transition-transform duration-300"
-              whileHover={{ scale: 1.1 }}
-            />
+            <div className="flex justify-center">
+              <motion.div
+                whileHover={{ scale: 1.1 }}
+                className="relative w-28 h-28 rounded-full overflow-hidden border-4 border-blue-400 shadow-md"
+              >
+                <Image
+                  key={avatarUrl}
+                  src={avatarUrl}
+                  alt="Avatar"
+                  fill
+                  className="object-cover"
+                />
+              </motion.div>
+            </div>
 
             <input
               type="file"
@@ -121,7 +129,7 @@ export default function HomePage() {
             </Link>
 
             <button
-              onClick={() => signOut({ callbackUrl: '/login' })}
+              onClick={() => signOut({ callbackUrl: "/login" })}
               className="block w-full py-3 bg-red-500 hover:bg-red-600 text-white font-bold rounded-xl transition-all duration-300 shadow-md"
             >
               Sign Out

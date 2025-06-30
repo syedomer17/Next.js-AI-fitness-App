@@ -5,6 +5,7 @@ import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import gsap from 'gsap';
+import { FaGithub } from 'react-icons/fa';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -20,7 +21,7 @@ export default function LoginPage() {
 
   // For reset password
   const [resetPassword, setResetPassword] = useState({ newPassword: '', confirmPassword: '' });
-  const [resetEmail, setResetEmail] = useState(''); // store email after forgot
+  const [resetEmail, setResetEmail] = useState('');
 
   useEffect(() => {
     gsap.set('.form-container', { opacity: 0, y: -100 });
@@ -32,7 +33,6 @@ export default function LoginPage() {
     });
   }, [mode]);
 
-  // Login handlers
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
@@ -53,7 +53,6 @@ export default function LoginPage() {
     }
   };
 
-  // Forgot password submit (send OTP or just proceed to reset)
   const handleForgotSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!forgotEmail) {
@@ -71,7 +70,7 @@ export default function LoginPage() {
       setLoading(false);
       if (res.ok) {
         alert('You can now set your new password.');
-        setResetEmail(forgotEmail); // save email for reset
+        setResetEmail(forgotEmail);
         setMode('reset');
       } else {
         alert(data.error || 'Failed to proceed');
@@ -82,7 +81,6 @@ export default function LoginPage() {
     }
   };
 
-  // Reset password handlers
   const handleResetChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     setResetPassword({ ...resetPassword, [e.target.name]: e.target.value });
 
@@ -184,21 +182,46 @@ export default function LoginPage() {
                 <hr className="flex-1 border-white/30" />
               </div>
 
-              <button
-                type="button"
-                onClick={() => signIn('github', { callbackUrl: '/' })}
-                className="w-full bg-black py-3 rounded-lg shadow-lg hover:bg-gray-900 transition duration-300 mb-2"
-              >
-                Continue with GitHub
-              </button>
+              {/* Branded social buttons */}
+              <div className="space-y-2">
+                <button
+                  type="button"
+                  onClick={() => signIn('github', { callbackUrl: '/' })}
+                  className="w-full flex items-center justify-center gap-2 bg-black text-white py-3 rounded-lg hover:bg-gray-800 transition duration-300"
+                >
+                  <FaGithub size={20} />
+                  login with GitHub
+                </button>
 
-              <button
-                type="button"
-                onClick={() => signIn('google', { callbackUrl: '/' })}
-                className="w-full bg-red-600 py-3 rounded-lg shadow-lg hover:bg-red-700 transition duration-300"
-              >
-                Continue with Google
-              </button>
+                <button
+                  type="button"
+                  onClick={() => signIn('google', { callbackUrl: '/' })}
+                  className="w-full flex items-center justify-center gap-2 bg-white text-black py-3 rounded-lg border border-gray-300 hover:bg-gray-100 transition duration-300"
+                >
+                  <svg
+                    className="w-5 h-5"
+                    viewBox="0 0 533.5 544.3"
+                  >
+                    <path
+                      fill="#4285f4"
+                      d="M533.5 278.4c0-17.4-1.4-34.1-4-50.4H272v95.4h146.9c-6.3 34.1-25.1 62.9-53.6 82.1v68.3h86.7c50.8-46.7 81.5-115.5 81.5-195.4z"
+                    />
+                    <path
+                      fill="#34a853"
+                      d="M272 544.3c72.9 0 134-24.1 178.7-65.4l-86.7-68.3c-24 16.1-54.6 25.7-92 25.7-70.7 0-130.7-47.7-152.2-111.6H28.4v70.2c44.5 88.3 136.6 149.4 243.6 149.4z"
+                    />
+                    <path
+                      fill="#fbbc04"
+                      d="M119.8 324.7c-10.4-30.7-10.4-63.7 0-94.4V160H28.4c-43.3 85.5-43.3 187.8 0 273.3l91.4-70.6z"
+                    />
+                    <path
+                      fill="#ea4335"
+                      d="M272 107.4c39.7 0 75.2 13.6 103.2 40.5l77.1-77.1C405.9 24.4 344.9 0 272 0 165 0 72.9 61.1 28.4 149.4l91.4 70.6c21.5-63.9 81.5-112.6 152.2-112.6z"
+                    />
+                  </svg>
+                  login with Google
+                </button>
+              </div>
 
               <p className="mt-4 text-center">
                 <button
